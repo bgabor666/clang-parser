@@ -6,17 +6,22 @@ import clang.cindex
 
 def visitor(cursor):
   print 'visiting', cursor.kind
-  if cursor.kind == clang.cindex.CursorKind.CALL_EXPR:
-    print 'Found %s [line=%s, col=%s]' % (
-            cursor.displayname, cursor.location.line, cursor.location.column)
+  #if cursor.kind == clang.cindex.CursorKind.CALL_EXPR:
+    #print 'Found %s [line=%s, col=%s]' % (
+            #cursor.displayname, cursor.location.line, cursor.location.column)
 
   if cursor.kind == clang.cindex.CursorKind.FUNCTION_DECL:
-    print 'Found %s [line=%s, col=%s]' % (
-            cursor.canonical.displayname, cursor.location.line, cursor.location.column)
+    #print 'Found %s return type %s [line=%s, col=%s]' % (
+            #cursor.canonical.displayname, cursor.type.get_result().get_canonical().kind, cursor.location.line, cursor.location.column)
+
+    #print '{} {}'.format(cursor.type.get_result().get_canonical().kind, cursor.canonical.displayname)
+    print '{} {}'.format(cursor.type.get_result().get_canonical().spelling, cursor.canonical.displayname)
 
   if cursor.kind == clang.cindex.CursorKind.PARM_DECL:
+    #print 'Found %s type %s [line=%s, col=%s]' % (
+            #cursor.displayname, cursor.type.get_canonical().kind, cursor.location.line, cursor.location.column)
     print 'Found %s type %s [line=%s, col=%s]' % (
-            cursor.displayname, cursor.type.get_canonical().kind, cursor.location.line, cursor.location.column)
+            cursor.displayname, cursor.type.get_canonical().spelling, cursor.location.line, cursor.location.column)
 
   children = list(cursor.get_children())
   print '  has {0} children'.format(len(children))
