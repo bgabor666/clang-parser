@@ -1,0 +1,1 @@
+LD_LIBRARY_PATH=/usr/lib/llvm-5.0/lib ./test-bindings.py test.h
