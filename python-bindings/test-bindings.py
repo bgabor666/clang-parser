@@ -8,15 +8,13 @@ import clang.cindex
 
 def parm_visitor(cursor):
   if cursor.kind == clang.cindex.CursorKind.PARM_DECL:
-    #print('>>> Found %s type %s [line=%s, col=%s]' % (
-            #cursor.displayname, cursor.type.get_canonical().spelling, cursor.location.line, cursor.location.column))
     print('{} {}'.format(cursor.type.get_canonical().spelling, cursor.displayname), end='')
 
 def visitor(cursor):
-
-  if cursor.kind == clang.cindex.CursorKind.FUNCTION_DECL:
+  if (cursor.location.file != None and
+      cursor.location.file.name == sys.argv[1] and
+      cursor.kind == clang.cindex.CursorKind.FUNCTION_DECL):
     print('//{} {}'.format(cursor.type.get_result().spelling, cursor.canonical.displayname))
-    #print '//{} {}'.format(cursor.type.get_result().spelling, cursor.spelling)
 
     print('Built-in displayname: {} {}'.format(cursor.type.get_result().get_canonical().spelling, cursor.canonical.displayname))
 
@@ -30,7 +28,7 @@ def visitor(cursor):
         if index < number_of_children - 1:
           print(', ', end='')
 
-    print(')')
+    print(');')
 
   children = list(cursor.get_children())
   for child in children:
