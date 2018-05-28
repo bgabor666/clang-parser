@@ -1,7 +1,9 @@
-//#include <stdio.h>
+#include <stdio.h>
 #include <time.h>
 
 typedef long test_int;
+
+enum color { RED, GREEN, BLUE};
 
 /*
 struct TestStruct {
