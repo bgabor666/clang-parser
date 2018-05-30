@@ -6,6 +6,43 @@ import pprint
 import sys
 import clang.cindex
 
+
+class Decl:
+    def __init__(self, cursor):
+        self._cursor = cursor
+
+    @property
+    def name(self):
+        return self._cursor.spelling
+
+
+class CFunctionDecl(Decl):
+    def __init__(self, cursor):
+        Decl.__init__(self, cursor)
+        self._params = []
+
+        function_children = list(cursor.get_children())
+        for child in function_children:
+            if child.kind == clang.cindex.CursorKind.PARM_DECL:
+                self._params.append(CFunctionParameterDecl(child))
+
+    @property
+    def canonical_return_type(self):
+        return self._cursor.type.get_result().get_canonical().spelling
+
+    @property
+    def params(self):
+        return self._params
+
+class CFunctionParameterDecl(Decl):
+    def __init__(self, cursor):
+        Decl.__init__(self, cursor)
+
+    @property
+    def canonical_type(self):
+        return self._cursor.type.get_canonical().spelling
+
+
 funcs = []
 
 def parm_visitor(cursor):
@@ -24,7 +61,7 @@ def visitor(cursor):
       cursor.kind == clang.cindex.CursorKind.FUNCTION_DECL):
     print('//{} {}'.format(cursor.type.get_result().spelling, cursor.canonical.displayname))
 
-    funcs.append(cursor)
+    funcs.append(CFunctionDecl(cursor))
 
     for arg in cursor.get_arguments():
       print('Function argument: {}', arg.kind)
@@ -83,4 +120,6 @@ else:
   visitor(tu.cursor)
 
 for func in funcs:
-  print(func.displayname) 
+    print('{} {}'.format(func.canonical_return_type, func.name))
+    for param in func.params:
+        print('>>> {} {}'.format(param.canonical_type, param.name))
